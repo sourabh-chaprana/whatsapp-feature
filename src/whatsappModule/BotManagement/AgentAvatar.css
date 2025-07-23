@@ -1,0 +1,71 @@
+.agent-avatar {
+  position: relative;
+  display: inline-block;
+}
+
+.agent-avatar-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agent-avatar:hover .agent-avatar-circle {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Size variants */
+.agent-avatar.small .agent-avatar-circle {
+  width: 28px;
+  height: 28px;
+  font-size: 11px;
+}
+
+.agent-avatar.medium .agent-avatar-circle {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.agent-avatar.large .agent-avatar-circle {
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+}
+
+/* Tooltip styling */
+.agent-avatar[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1f2937;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 8px;
+}
+
+.agent-avatar[title]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid #1f2937;
+  margin-bottom: 3px;
+  z-index: 1000;
+}
