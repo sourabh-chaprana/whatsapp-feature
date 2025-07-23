@@ -6,10 +6,11 @@ import { BrowserRouter } from "react-router-dom";
 import { store, persistor } from "./store/store";
 import "./index.css";
 import App from "./App.jsx";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Set the auth token in localStorage for testing
 const testToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvc2hhbi5rdW1hckB3aGlsdGVyLmFpIiwicm9sZSI6IkFETUlOIiwiZnVsbE5hbWUiOiJSb3NoYW4gdGVzdCIsIm9yZ0lkIjoiM2ZmODljMTItOWVhYS00MWJlLWJlZTMtN2UxODg5NDJmZmRmIiwidXNlcklkIjoiNjg2ZjY4ZDg5MWU1YzAxMTNhYjU4N2U5IiwiaWF0IjoxNzUzMjUwMzIxLCJleHAiOjE3NTM2ODIzMjF9.zYKyuYRWNA0lg6qnFuDolCcvIaDx2tLB0U6IWYgRaec";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJvc2hhbi5rdW1hckB3aGlsdGVyLmFpIiwicm9sZSI6IkFETUlOIiwiZnVsbE5hbWUiOiJSb3NoYW4gdGVzdCIsIm9yZ0lkIjoiM2ZmODljMTItOWVhYS00MWJlLWJlZTMtN2UxODg5NDJmZmRmIiwidXNlcklkIjoiNjg2ZjY4ZDg5MWU1YzAxMTNhYjU4N2U5IiwiaWF0IjoxNzUzMjY1MTIwLCJleHAiOjE3NTMyNjg3MjB9.PLmTpoH0n3Y68yyBJvtdXCD093_GBBsOB24JkfDGZsQ"
 localStorage.setItem("authToken", testToken);
 console.log("Auth token set in localStorage:", testToken);
 
