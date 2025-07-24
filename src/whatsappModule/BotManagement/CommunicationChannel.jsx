@@ -914,7 +914,7 @@ const CommunicationChannel = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-white p-4 md:p-8 lg:p-12 fixed w-full">
+    <div className="  w-auto min-h-screen bg-gradient-to-b from-gray-100 to-white p-4 md:p-8 lg:p-12 fixed ">
       <MessageMenuContext.Provider value={{ openMenuId, setOpenMenuId }}>
         <div
           className={`comm-channel-root ${
