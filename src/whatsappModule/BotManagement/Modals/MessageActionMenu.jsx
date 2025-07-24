@@ -123,10 +123,10 @@ const MessageActionMenu = ({ message, currentSession, onReply }) => {
   return (
     <div className="message-action-wrapper" ref={menuRef}>
       <button
-        className={`message-dropdown-btn ${isThisMenuOpen ? "active" : ""}`}
+        className={`message-dropdown-btn border-transparent focus:outline-none focus:ring-0 bg-transparent ${isThisMenuOpen ? "active" : ""}`}
         onClick={toggleMenu}
       >
-        <i className="fas fa-ellipsis-v"></i>
+        <i className="fas fa-ellipsis-v text-dark-400 "  ></i>
       </button>
 
       {isThisMenuOpen && (
