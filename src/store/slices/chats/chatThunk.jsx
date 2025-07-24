@@ -9,7 +9,7 @@ export const fetchSessions = createAsyncThunk(
   "chat/fetchSessions",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await apiRequest(("/chat/sessions"), {
+      const response = await apiRequest("/chat/sessions", {
         method: "GET",
         headers: getAuthHeaders(),
       });
@@ -32,7 +32,7 @@ export const fetchMessagesBySession = createAsyncThunk(
   "chat/fetchMessagesBySession",
   async (sessionId, { rejectWithValue }) => {
     try {
-      const response = await apiRequest((`/chat/messages/${sessionId}`));
+      const response = await apiRequest(`/chat/messages/${sessionId}`);
       const data = await response.json();
 
       if (!response.ok) {
@@ -85,7 +85,7 @@ export const sendMessage = createAsyncThunk(
         }
       }
 
-      const response = await apiRequest(("/chat/message"), {
+      const response = await apiRequest("/chat/message", {
         method: "POST",
         headers: getAuthHeaders(true),
         body: JSON.stringify(finalMessageData),
@@ -115,7 +115,7 @@ export const deleteMessage = createAsyncThunk(
   "chat/deleteMessage",
   async (messageId, { rejectWithValue }) => {
     try {
-      const response = await apiRequest((`/chat/message/${messageId}`), {
+      const response = await apiRequest(`/chat/message/${messageId}`, {
         method: "DELETE",
       });
 
@@ -138,7 +138,7 @@ export const deleteAllSessionMessages = createAsyncThunk(
   "chat/deleteAllSessionMessages",
   async (sessionId, { rejectWithValue }) => {
     try {
-      const response = await apiRequest((`/chat/messages/${sessionId}`), {
+      const response = await apiRequest(`/chat/messages/${sessionId}`, {
         method: "DELETE",
       });
 
@@ -161,7 +161,7 @@ export const deleteLead = createAsyncThunk(
   "leads/deleteLead",
   async (id, { rejectWithValue }) => {
     try {
-      const response = await apiRequest((`/leads/${id}`), {
+      const response = await apiRequest(`/leads/${id}`, {
         method: "DELETE",
         headers: getAuthHeaders(false),
       });
@@ -187,7 +187,7 @@ export const assignUsersToSession = createAsyncThunk(
     try {
       const orgId = getOrgIdFromToken();
       console.log("orgId--------------------------------", orgId);
-      const response = await apiRequest(("/chat/assign-user"), {
+      const response = await apiRequest("/chat/assign-user", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -216,7 +216,7 @@ export const sendTemplateMessage = createAsyncThunk(
   "chat/sendTemplateMessage",
   async ({ templateData, sessionId, templateType }, { rejectWithValue }) => {
     try {
-      const response = await apiRequest(("/chat/send-template"), {
+      const response = await apiRequest("/chat/send-template", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
@@ -274,7 +274,7 @@ export const sendTemplateToPhoneNumber = createAsyncThunk(
           sessionId: targetSession._id,
         };
 
-        const response = await apiRequest(("/chat/message"), {
+        const response = await apiRequest("/chat/message", {
           method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(messagePayload),
@@ -302,7 +302,7 @@ export const sendTemplateToPhoneNumber = createAsyncThunk(
         };
 
         // Try the original endpoint with createSession flag
-        const response = await apiRequest(("/chat/message"), {
+        const response = await apiRequest("/chat/message", {
           method: "POST",
           headers: getAuthHeaders(),
           body: JSON.stringify(createAndSendPayload),
@@ -317,17 +317,14 @@ export const sendTemplateToPhoneNumber = createAsyncThunk(
             // For now, let's try a workaround by using the WhatsApp API directly
 
             // Alternative: Try using a different endpoint that might handle this
-            const altResponse = await apiRequest(
-              ("/whatsapp/send-template"),
-              {
-                method: "POST",
-                headers: getAuthHeaders(),
-                body: JSON.stringify({
-                  phoneNumber: normalizedPhone,
-                  templateData: templateData,
-                }),
-              }
-            );
+            const altResponse = await apiRequest("/whatsapp/send-template", {
+              method: "POST",
+              headers: getAuthHeaders(),
+              body: JSON.stringify({
+                phoneNumber: normalizedPhone,
+                templateData: templateData,
+              }),
+            });
 
             if (altResponse.ok) {
               const altData = await altResponse.json();
@@ -349,6 +346,67 @@ export const sendTemplateToPhoneNumber = createAsyncThunk(
       }
     } catch (error) {
       console.error("Send template to phone number error:", error);
+      return rejectWithValue(error.message || "Network error");
+    }
+  }
+);
+
+// 9. Fetch WhatsApp Templates
+export const fetchWhatsAppTemplates = createAsyncThunk(
+  "chat/fetchWhatsAppTemplates",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest("/whatsapp/templates/list", {
+        method: "GET",
+        headers: getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.error || "Failed to fetch templates");
+      }
+
+      // Filter out hello_world template
+      const filteredTemplates =
+        data.data?.data?.filter(
+          (template) => template.name !== "hello_world"
+        ) || [];
+
+      return filteredTemplates;
+    } catch (error) {
+      console.error("Fetch WhatsApp templates error:", error);
+      return rejectWithValue(error.message || "Network error");
+    }
+  }
+);
+
+// 10. Send WhatsApp Template to Current Session
+export const sendWhatsAppTemplateToSession = createAsyncThunk(
+  "chat/sendWhatsAppTemplateToSession",
+  async ({ templateData, sessionId, phoneNumber }, { rejectWithValue }) => {
+    try {
+      const response = await apiRequest("/whatsapp/send-template", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+          templateId: templateData.id,
+          templateName: templateData.name,
+          parameters: templateData.parameters || [],
+          phoneNumber: phoneNumber,
+          sessionId: sessionId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(data.error || "Failed to send template");
+      }
+
+      return data;
+    } catch (error) {
+      console.error("Send WhatsApp template error:", error);
       return rejectWithValue(error.message || "Network error");
     }
   }
