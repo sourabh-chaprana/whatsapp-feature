@@ -7,6 +7,8 @@ import {
   deleteMessage,
   deleteAllSessionMessages,
   assignUsersToSession,
+  fetchWhatsAppTemplates,
+  sendWhatsAppTemplateToSession,
 } from "./chatThunk";
 // import normalizePhoneNumber from "../../../utils/normalizePhoneNumber";
 
@@ -20,6 +22,11 @@ const initialState = {
   // Template message state
   sendingTemplate: false,
   templateError: null,
+
+  // WhatsApp templates state
+  whatsappTemplates: [],
+  fetchingTemplates: false,
+  templatesError: null,
 };
 
 const chatSlice = createSlice({
@@ -34,6 +41,9 @@ const chatSlice = createSlice({
     },
     clearTemplateError: (state) => {
       state.templateError = null;
+    },
+    clearTemplatesError: (state) => {
+      state.templatesError = null;
     },
   },
   extraReducers: (builder) => {
@@ -152,10 +162,42 @@ const chatSlice = createSlice({
       .addCase(sendTemplateToPhoneNumber.rejected, (state, action) => {
         state.sendingTemplate = false;
         state.templateError = action.payload;
+      })
+
+      // Handle WhatsApp templates fetch
+      .addCase(fetchWhatsAppTemplates.pending, (state) => {
+        state.fetchingTemplates = true;
+        state.templatesError = null;
+      })
+      .addCase(fetchWhatsAppTemplates.fulfilled, (state, action) => {
+        state.fetchingTemplates = false;
+        state.whatsappTemplates = action.payload;
+      })
+      .addCase(fetchWhatsAppTemplates.rejected, (state, action) => {
+        state.fetchingTemplates = false;
+        state.templatesError = action.payload;
+      })
+
+      // Handle WhatsApp template send to session
+      .addCase(sendWhatsAppTemplateToSession.pending, (state) => {
+        state.sendingTemplate = true;
+        state.templateError = null;
+      })
+      .addCase(sendWhatsAppTemplateToSession.fulfilled, (state, action) => {
+        state.sendingTemplate = false;
+        // Template sent successfully
+      })
+      .addCase(sendWhatsAppTemplateToSession.rejected, (state, action) => {
+        state.sendingTemplate = false;
+        state.templateError = action.payload;
       });
   },
 });
 
-export const { setCurrentSession, clearMessages, clearTemplateError } =
-  chatSlice.actions;
+export const {
+  setCurrentSession,
+  clearMessages,
+  clearTemplateError,
+  clearTemplatesError,
+} = chatSlice.actions;
 export default chatSlice.reducer;
