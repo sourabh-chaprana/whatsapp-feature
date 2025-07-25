@@ -27,6 +27,24 @@ const MessageActionMenu = ({ message, currentSession, onReply }) => {
 
   const toggleMenu = () => {
     setIsThisMenuOpen(!isThisMenuOpen);
+
+    setTimeout(() => {
+      const button = menuRef.current?.querySelector("button");
+      const menu = menuRef.current?.querySelector(".message-action-menu");
+      if (button && menu) {
+        const rect = button.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const menuHeight = 180; // estimated height
+  
+        if (spaceBelow < menuHeight) {
+          menu.classList.remove("bottom");
+          menu.classList.add("top");
+        } else {
+          menu.classList.remove("top");
+          menu.classList.add("bottom");
+        }
+      }
+    }, 0);
   };
 
   // Check if message has attachment
@@ -60,6 +78,7 @@ const MessageActionMenu = ({ message, currentSession, onReply }) => {
 
   const handleReply = () => {
     setIsThisMenuOpen(false);
+    debugger;
     const messageContent =
       message.user ||
       (typeof message.bot === "string"
@@ -120,6 +139,7 @@ const MessageActionMenu = ({ message, currentSession, onReply }) => {
     }
   };
 
+
   return (
     <div className="message-action-wrapper" ref={menuRef}>
       <button
@@ -130,7 +150,7 @@ const MessageActionMenu = ({ message, currentSession, onReply }) => {
       </button>
 
       {isThisMenuOpen && (
-        <div className="message-action-menu">
+        <div className={`message-action-menu ${isThisMenuOpen ? "top-[-70px]" : "bottom"}`}>
           {hasAttachment ? (
             <>
               <button onClick={handleAttachToLead} className="message-action-btn">
